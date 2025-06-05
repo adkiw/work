@@ -77,7 +77,7 @@ def show(conn, c):
     st.title("Užsakymų valdymas")
     add_clicked = st.button("➕ Pridėti naują krovinį", use_container_width=True)
 
-    # Įsitikiname, kad lentelėje 'kroviniai' yra visi reikiami stulpeliai
+    # Įsitikinti, kad visi stulpeliai egzistuoja lentelėje 'kroviniai'
     expected = {
         'klientas': 'TEXT',
         'uzsakymo_numeris': 'TEXT',
@@ -111,17 +111,10 @@ def show(conn, c):
     existing = {r[1] for r in c.fetchall()}
     for col, typ in expected.items():
         if col not in existing:
-            try:
-                c.execute(f"ALTER TABLE kroviniai ADD COLUMN {col} {typ}")
-            except Exception as e:
-                # Jei jau egzistuoja, praleidžiame
-                if "duplicate column name" in str(e).lower():
-                    pass
-                else:
-                    raise
-    conn.commit()  # :contentReference[oaicite:0]{index=0}
+            c.execute(f"ALTER TABLE kroviniai ADD COLUMN {col} {typ}")
+    conn.commit()
 
-    # Paruošiame dropdown sąrašus ir žemėlapius
+    # Paruošti dropdown'us ir žemėlapius
     klientai = [r[0] for r in c.execute("SELECT pavadinimas FROM klientai").fetchall()]
     if len(klientai) == 0:
         st.warning("Nėra nė vieno kliento! Pridėkite klientą modulyje **Klientai** ir grįžkite čia.")
@@ -136,7 +129,7 @@ def show(conn, c):
     vilkikai_df = pd.read_sql_query("SELECT numeris, vadybininkas FROM vilkikai", conn)
     vilk_vad_map = {r['numeris']: r['vadybininkas'] for _, r in vilkikai_df.iterrows()}
 
-    # Sudarome žemėlapį: klientas → likes_limitas (dabar esamas)
+    # Klientų limitų žemėlapis
     df_klientai = pd.read_sql_query("SELECT pavadinimas, likes_limitas FROM klientai", conn)
     klientu_limitai = {row['pavadinimas']: row['likes_limitas'] for _, row in df_klientai.iterrows()}
 
@@ -156,13 +149,13 @@ def show(conn, c):
 
     sel = st.session_state['selected_cargo']
 
-    # 4. Esamų krovinių sąrašas
+    # 4. Krovinio sąrašas
     if sel is None:
         df = pd.read_sql_query("SELECT * FROM kroviniai", conn)
         if df.empty:
             st.info("Kol kas nėra krovinių.")
         else:
-            # Sukuriame sujungtus stulpelius
+            # Sukurti papildomas stulpelius
             df["pakrovimo_vieta"] = df.apply(lambda r: get_vieta(r.get('pakrovimo_salis', ''), r.get('pakrovimo_regionas', '')), axis=1)
             df["iskrovimo_vieta"] = df.apply(lambda r: get_vieta(r.get('iskrovimo_salis', ''), r.get('iskrovimo_regionas', '')), axis=1)
             df["transporto_vadybininkas"] = df["vilkikas"].map(vilk_vad_map).fillna("")
@@ -174,7 +167,7 @@ def show(conn, c):
 
             df_disp = df[FIELD_ORDER].fillna("")
 
-            # Filtrai viršuje
+            # Filtravimas
             filter_cols = st.columns(len(df_disp.columns) + 1)
             for i, col in enumerate(df_disp.columns):
                 filter_cols[i].text_input(
@@ -207,177 +200,301 @@ def show(conn, c):
                     args=(row['id'],)
                 )
 
-    # 5. Forma krovinio pridėjimui/redagavimui
-    if sel is not None:
-        is_new = (sel == 0)
+            st.download_button(
+                "💾 Eksportuoti kaip CSV",
+                data=df_disp.to_csv(index=False, sep=';').encode('utf-8'),
+                file_name="kroviniai.csv",
+                mime="text/csv"
+            )
+        return
+
+    # 5. Forma naujam / redaguojamam krovinį
+    is_new = (sel == 0)
+    data = {} if is_new else pd.read_sql_query("SELECT * FROM kroviniai WHERE id=?", conn, params=(sel,)).iloc[0]
+    if not is_new and data.empty:
+        st.error("Įrašas nerastas.")
+        clear_sel()
+        return
+
+    st.markdown("### Krovinių įvedimas")
+    colA, colB, colC, colD = st.columns(4)
+    with st.form("cargo_form", clear_on_submit=False):
+        # --- Stulpelis A: pagrindinė info ---
+        opts_k = [""] + klientai
+        idx_k = 0 if is_new else opts_k.index(data.get('klientas', ''))
+        klientas = colA.selectbox("Klientas", opts_k, index=idx_k, key="kl_klientas")
+        limito_likutis = klientu_limitai.get(klientas, "")
+        if klientas:
+            colA.info(f"Limito likutis: {limito_likutis}")
+        uzsak = colA.text_input(
+            "Užsakymo nr.",
+            value=("" if is_new else data.get('uzsakymo_numeris', '')),
+            key="kl_uzsak"
+        )
+        sask_busenos = ["Neapmokėta", "Apmokėta"]
+        sask_busena_val = sask_busenos[0] if is_new else data.get("saskaitos_busena", sask_busenos[0])
+        sask_busena = colA.selectbox("Sąskaitos būsena", sask_busenos, index=sask_busenos.index(sask_busena_val), key="sask_busena")
+
+        eksped_val = "" if is_new else data.get('ekspedicijos_vadybininkas', "")
+        eksped_idx = eksped_dropdown.index(eksped_val) if eksped_val in eksped_dropdown else 0
+        eksped_vad = colA.selectbox("Ekspedicijos vadybininkas", eksped_dropdown, index=eksped_idx, key="eksped_vad")
+
+        # --- Stulpelis B: pakrovimo datos ir laikas ---
+        pk_data = colB.date_input(
+            "Pakrovimo data",
+            value=(date.today() if is_new else pd.to_datetime(data['pakrovimo_data']).date()),
+            key="pk_data"
+        )
+        pk_salis_opts = [f"{n} ({c})" for n, c in EU_COUNTRIES]
+        pk_salis_index = 0
         if not is_new:
-            df_sel = pd.read_sql_query("SELECT * FROM kroviniai WHERE id = ?", conn, params=(sel,))
-            if df_sel.empty:
-                st.error("Krovinys nerastas.")
-                clear_sel()
-                return
-            row = df_sel.iloc[0]
+            try:
+                pk_salis_index = pk_salis_opts.index(next(x for x in pk_salis_opts if data.get('pakrovimo_salis', '') in x))
+            except StopIteration:
+                pass
+        pk_salis = colB.selectbox("Pakrovimo šalis", pk_salis_opts, index=pk_salis_index, key="pk_sal")
+        pk_regionas = colB.text_input(
+            "Pakrovimo regionas",
+            value=("" if is_new else data.get('pakrovimo_regionas', '')),
+            key="pk_regionas"
+        )
+        pk_mie = colB.text_input(
+            "Pakrovimo miestas",
+            value=("" if is_new else data.get('pakrovimo_miestas', '')),
+            key="pk_mie"
+        )
+        pk_adr = colB.text_input(
+            "Pakrovimo adresas",
+            value=("" if is_new else data.get('pakrovimo_adresas', '')),
+            key="pk_adr"
+        )
+        pk_nuo = colB.time_input(
+            "Pakrovimo laikas nuo",
+            value=(time(8, 0) if is_new else pd.to_datetime(data.get('pakrovimo_laikas_nuo', "08:00")).time()),
+            key="pk_nuo"
+        )
+        pk_iki = colB.time_input(
+            "Pakrovimo laikas iki",
+            value=(time(17, 0) if is_new else pd.to_datetime(data.get('pakrovimo_laikas_iki', "17:00")).time()),
+            key="pk_iki"
+        )
+
+        # --- Stulpelis C: iškrovimo datos ir laikas ---
+        isk_data = colC.date_input(
+            "Iškrovimo data",
+            value=((pk_data + timedelta(days=1)) if is_new else pd.to_datetime(data['iskrovimo_data']).date()),
+            key="isk_data"
+        )
+        is_salis_opts = pk_salis_opts
+        is_salis_index = 0
+        if not is_new:
+            try:
+                is_salis_index = is_salis_opts.index(next(x for x in is_salis_opts if data.get('iskrovimo_salis', '') in x))
+            except StopIteration:
+                pass
+        is_salis = colC.selectbox("Iškrovimo šalis", is_salis_opts, index=is_salis_index, key="is_sal")
+        is_regionas = colC.text_input(
+            "Iškrovimo regionas",
+            value=("" if is_new else data.get('iskrovimo_regionas', '')),
+            key="is_regionas"
+        )
+        is_mie = colC.text_input(
+            "Iškrovimo miestas",
+            value=("" if is_new else data.get('iskrovimo_miestas', '')),
+            key="is_mie"
+        )
+        is_adr = colC.text_input(
+            "Iškrovimo adresas",
+            value=("" if is_new else data.get('iskrovimo_adresas', '')),
+            key="is_adr"
+        )
+        is_nuo = colC.time_input(
+            "Iškrovimo laikas nuo",
+            value=(time(8, 0) if is_new else pd.to_datetime(data.get('iskrovimo_laikas_nuo', "08:00")).time()),
+            key="is_nuo"
+        )
+        is_iki = colC.time_input(
+            "Iškrovimo laikas iki",
+            value=(time(17, 0) if is_new else pd.to_datetime(data.get('iskrovimo_laikas_iki', "17:00")).time()),
+            key="is_iki"
+        )
+
+        # --- Stulpelis D: transporto priemonės ir finansai ---
+        v_opts = [""] + vilkikai
+        v_idx = 0 if is_new else v_opts.index(data.get('vilkikas', ''))
+        vilk = colD.selectbox("Vilkikas", v_opts, index=v_idx, key="cr_vilk")
+        transp_vad = vilk_vad_map.get(vilk, "") if vilk else ""
+        priekaba_value = ""
+        if vilk:
+            res = c.execute("SELECT priekaba FROM vilkikai WHERE numeris = ?", (vilk,)).fetchone()
+            priekaba_value = res[0] if res and res[0] else ""
+        colD.text_input("Priekaba", priekaba_value, disabled=True, key="cr_priek")
+        km = colD.text_input(
+            "Km",
+            value=("" if is_new else str(data.get('kilometrai', 0))),
+            key="cr_km"
+        )
+        fr = colD.text_input(
+            "Frachtas (€)",
+            value=("" if is_new else str(data.get('frachtas', 0))),
+            key="cr_fr"
+        )
+        sv = colD.text_input(
+            "Svoris (kg)",
+            value=("" if is_new else str(data.get('svoris', 0))),
+            key="cr_sv"
+        )
+        pal = colD.text_input(
+            "Padėklų sk.",
+            value=("" if is_new else str(data.get('paleciu_skaicius', 0))),
+            key="cr_pal"
+        )
+
+        save = st.form_submit_button("💾 Išsaugoti")
+        back = st.form_submit_button("🔙 Grįžti į sąrašą", on_click=clear_sel)
+
+    # 6. Išsaugojimo / Grįžimo logika
+    if save:
+        try:
+            frachtas_float = float(fr.replace(",", ".") or 0)
+        except:
+            st.error("❌ Netinkamas frachtas. Įveskite skaičių.")
+            return
+        try:
+            km_int = int(km or 0)
+            sv_int = int(sv or 0)
+            pal_int = int(pal or 0)
+        except:
+            st.error("❌ Netinkamas skaičius (Km / Svoris / Padėklai).")
+            return
+
+        # Patikrinti, ar pakrovimo data ne vėlesnė už iškrovimo
+        if pk_data > isk_data:
+            st.error("Pakrovimo data negali būti vėlesnė už iškrovimo.")
+            return
+        elif not klientas or not uzsak:
+            st.error("Privalomi laukai: Klientas ir Užsakymo nr.")
+            return
         else:
-            row = {}
+            # Patikrinti, ar vilkikas turi persidengiantį krovinį (išimtis: jei kaupiasi ir kraunasi tą pačią dieną)
+            if vilk:
+                new_pk = pk_data.isoformat()
+                new_isk = isk_data.isoformat()
+                # Jeigu redaguojama, tuomet exclude dabartinį įrašą, o jeigu naujas, exclude id=0, kuris neegzistuoja
+                existing_overlap = c.execute("""
+                    SELECT COUNT(*) FROM kroviniai
+                    WHERE vilkikas = ?
+                      AND id != ?
+                      AND (? < iskrovimo_data)
+                      AND (pakrovimo_data < ?)
+                """, (vilk, sel, new_pk, new_isk)).fetchone()
+                if existing_overlap and existing_overlap[0] > 0:
+                    st.error("❌ Šis vilkikas jau turi krovinį su persidengiančiomis datomis. Patikrinkite įrašų datas.")
+                    return
 
-        with st.form("cargo_form", clear_on_submit=False):
-            klientas = st.selectbox(
-                "Klientas",
-                [""] + klientai,
-                index=(klientai.index(row['klientas']) + 1 if not is_new and row.get('klientas') in klientai else 0)
-            )
-            uzsak = st.text_input("Užsakymo numeris", value=row.get('uzsakymo_numeris', ""))
+            # Išsaugoti klientui priskirtą VAT ir COFACE informaciją
+            vat_row = c.execute(
+                "SELECT vat_numeris, coface_limitas FROM klientai WHERE pavadinimas = ?",
+                (klientas,)
+            ).fetchone()
+            if not vat_row or not vat_row[0]:
+                st.error("❌ Kliento VAT numeris nerastas arba tuščias.")
+                return
+            vat_of_client, coface_of_client = vat_row
 
-            # Pakrovimo vieta
-            col1, col2 = st.columns(2)
-            with col1:
-                pk_salis = st.selectbox(
-                    "Pakrovimo šalis",
-                    [c[0] for c in EU_COUNTRIES],
-                    index=(next((i for i, t in enumerate(EU_COUNTRIES) if t[0] == row.get('pakrovimo_salis')), 0))
-                )
-            with col2:
-                pk_regionas = st.text_input("Pakrovimo regionas", value=row.get('pakrovimo_regionas', ""))
-            pk_mie = st.text_input("Pakrovimo miestas", value=row.get('pakrovimo_miestas', ""))
-            pk_adr = st.text_input("Pakrovimo adresas", value=row.get('pakrovimo_adresas', ""))
-            pk_data = st.date_input(
-                "Pakrovimo data",
-                value=date.fromisoformat(row['pakrovimo_data']) if not is_new and row.get('pakrovimo_data') else date.today()
-            )
-            pk_nuo = st.time_input(
-                "Laikas nuo",
-                value=time.fromisoformat(row['pakrovimo_laikas_nuo']) if not is_new and row.get('pakrovimo_laikas_nuo') else time(hour=8, minute=0)
-            )
-            pk_iki = st.time_input(
-                "Laikas iki",
-                value=time.fromisoformat(row['pakrovimo_laikas_iki']) if not is_new and row.get('pakrovimo_laikas_iki') else time(hour=17, minute=0)
-            )
+            # Apskaičiuoti mūsų limitą ir einamąją neapmokėtą sumą
+            musu_limitas = coface_of_client / 3.0
+            unpaid_sum = 0.0
+            try:
+                r = c.execute("""
+                    SELECT SUM(k.frachtas)
+                    FROM kroviniai AS k
+                    JOIN klientai AS cl ON k.klientas = cl.pavadinimas
+                    WHERE cl.vat_numeris = ?
+                      AND k.saskaitos_busena != 'Apmokėta'
+                """, (vat_of_client,)).fetchone()
+                if r and r[0] is not None:
+                    unpaid_sum = r[0]
+            except:
+                unpaid_sum = 0.0
 
-            # Iškrovimo vieta
-            col3, col4 = st.columns(2)
-            with col3:
-                is_salis = st.selectbox(
-                    "Iškrovimo šalis",
-                    [c[0] for c in EU_COUNTRIES],
-                    index=(next((i for i, t in enumerate(EU_COUNTRIES) if t[0] == row.get('iskrovimo_salis')), 0))
-                )
-            with col4:
-                is_regionas = st.text_input("Iškrovimo regionas", value=row.get('iskrovimo_regionas', ""))
-            is_mie = st.text_input("Iškrovimo miestas", value=row.get('iskrovimo_miestas', ""))
-            is_adr = st.text_input("Iškrovimo adresas", value=row.get('iskrovimo_adresas', ""))
-            isk_data = st.date_input(
-                "Iškrovimo data",
-                value=date.fromisoformat(row['iskrovimo_data']) if not is_new and row.get('iskrovimo_data') else date.today()
-            )
-            is_nuo = st.time_input(
-                "Iškr. laikas nuo",
-                value=time.fromisoformat(row['iskrovimo_laikas_nuo']) if not is_new and row.get('iskrovimo_laikas_nuo') else time(hour=8, minute=0)
-            )
-            is_iki = st.time_input(
-                "Iškr. laikas iki",
-                value=time.fromisoformat(row['iskrovimo_laikas_iki']) if not is_new and row.get('iskrovimo_laikas_iki') else time(hour=17, minute=0)
-            )
+            current_limit = musu_limitas - unpaid_sum
+            if current_limit < 0:
+                current_limit = 0.0
 
-            # Transportas ir vadybininkai
-            vilk = st.selectbox(
-                "Vilkikas",
-                [""] + vilkikai,
-                index=(vilkikai.index(row['vilkikas']) + 1 if not is_new and row.get('vilkikas') in vilkikai else 0)
-            )
-            priekaba_value = st.text_input("Priekaba", value=row.get('priekaba', ""))
-            eksped_vad = st.selectbox(
-                "Ekspedicijos vadybininkas",
-                eksped_dropdown,
-                index=(eksped_dropdown.index(row['ekspedicijos_vadybininkas']) if not is_new and row.get('ekspedicijos_vadybininkas') in eksped_dropdown else 0)
-            )
-            transp_vad = st.text_input("Transporto vadybininkas", value=row.get('transporto_vadybininkas', ""))
+            if frachtas_float > current_limit:
+                st.error(f"Kliento limito likutis ({round(current_limit,2)}) yra mažesnis nei frachtas ({frachtas_float}). Negalima išsaugoti.")
+                return
 
-            # Krovinio duomenys
-            km_int = st.number_input("Kilometrai", min_value=0, value=row.get('kilometrai', 0), step=1)
-            frachtas_float = st.number_input("Frachtas (€)", min_value=0.0, value=row.get('frachtas', 0.0), step=0.01, format="%.2f")
-            sv_int = st.number_input("Svoris (kg)", min_value=0, value=row.get('svoris', 0), step=1)
-            pal_int = st.number_input("Palecių skaičius", min_value=0, value=row.get('paleciu_skaicius', 0), step=1)
-            sask_busenos = ["", "Išrašyta", "Apmokėta"]
-            sask_busena_val = sask_busenos[0] if is_new else row.get('saskaitos_busena', sask_busenos[0])
-            sask_busena = st.selectbox(
-                "Sąskaitos būsena",
-                sask_busenos,
-                index=sask_busenos.index(sask_busena_val)
-            )
+            # Sudėti visus laukus į žodyną
+            vals = {
+                'klientas': klientas,
+                'uzsakymo_numeris': uzsak,
+                'pakrovimo_salis': pk_salis.split("(")[-1][:-1] if "(" in pk_salis else pk_salis,
+                'pakrovimo_regionas': pk_regionas,
+                'pakrovimo_miestas': pk_mie,
+                'pakrovimo_adresas': pk_adr,
+                'pakrovimo_data': pk_data.isoformat(),
+                'pakrovimo_laikas_nuo': pk_nuo.isoformat(),
+                'pakrovimo_laikas_iki': pk_iki.isoformat(),
+                'iskrovimo_salis': is_salis.split("(")[-1][:-1] if "(" in is_salis else is_salis,
+                'iskrovimo_regionas': is_regionas,
+                'iskrovimo_miestas': is_mie,
+                'iskrovimo_adresas': is_adr,
+                'iskrovimo_data': isk_data.isoformat(),
+                'iskrovimo_laikas_nuo': is_nuo.isoformat(),
+                'iskrovimo_laikas_iki': is_iki.isoformat(),
+                'vilkikas': vilk,
+                'priekaba': priekaba_value,
+                'atsakingas_vadybininkas': transp_vad,
+                'ekspedicijos_vadybininkas': eksped_vad,
+                'kilometrai': km_int,
+                'frachtas': frachtas_float,
+                'svoris': sv_int,
+                'paleciu_skaicius': pal_int,
+                'saskaitos_busena': sask_busena
+            }
 
-            save = st.form_submit_button("💾 Išsaugoti")
+            try:
+                if is_new:
+                    cols = ",".join(vals.keys())
+                    placeholders = ",".join(["?"] * len(vals))
+                    q = f"INSERT INTO kroviniai ({cols}) VALUES ({placeholders})"
+                    c.execute(q, tuple(vals.values()))
+                else:
+                    set_str = ",".join(f"{k}=?" for k in vals)
+                    q = f"UPDATE kroviniai SET {set_str} WHERE id=?"
+                    c.execute(q, tuple(vals.values()) + (sel,))
+                conn.commit()
 
-            if save:
-                vals = {
-                    'klientas': klientas,
-                    'uzsakymo_numeris': uzsak,
-                    'pakrovimo_salis': pk_salis,
-                    'pakrovimo_regionas': pk_regionas,
-                    'pakrovimo_miestas': pk_mie,
-                    'pakrovimo_adresas': pk_adr,
-                    'pakrovimo_data': pk_data.isoformat(),
-                    'pakrovimo_laikas_nuo': pk_nuo.isoformat(),
-                    'pakrovimo_laikas_iki': pk_iki.isoformat(),
-                    'iskrovimo_salis': is_salis,
-                    'iskrovimo_regionas': is_regionas,
-                    'iskrovimo_miestas': is_mie,
-                    'iskrovimo_adresas': is_adr,
-                    'iskrovimo_data': isk_data.isoformat(),
-                    'iskrovimo_laikas_nuo': is_nuo.isoformat(),
-                    'iskrovimo_laikas_iki': is_iki.isoformat(),
-                    'vilkikas': vilk,
-                    'priekaba': priekaba_value,
-                    'atsakingas_vadybininkas': transp_vad,
-                    'ekspedicijos_vadybininkas': eksped_vad,
-                    'transporto_vadybininkas': transp_vad,
-                    'kilometrai': km_int,
-                    'frachtas': frachtas_float,
-                    'svoris': sv_int,
-                    'paleciu_skaicius': pal_int,
-                    'saskaitos_busena': sask_busena
-                }
-
+                # Atnaujinti klientų limitus
+                unpaid_total = 0.0
                 try:
-                    if is_new:
-                        cols = ",".join(vals.keys())
-                        placeholders = ",".join(["?"] * len(vals))
-                        q = f"INSERT INTO kroviniai ({cols}) VALUES ({placeholders})"
-                        c.execute(q, tuple(vals.values()))
-                    else:
-                        set_str = ",".join(f"{k}=?" for k in vals)
-                        q = f"UPDATE kroviniai SET {set_str} WHERE id=?"
-                        c.execute(q, tuple(vals.values()) + (sel,))
-                    conn.commit()
-
-                    # Atnaujiname klientų limitus: suskaičiuojame nesumokėtų faktūrų sumą
+                    r2 = c.execute("""
+                        SELECT SUM(k.frachtas)
+                        FROM kroviniai AS k
+                        JOIN klientai AS cl ON k.klientas = cl.pavadinimas
+                        WHERE cl.vat_numeris = ?
+                          AND k.saskaitos_busena != 'Apmokėta'
+                    """, (vat_of_client,)).fetchone()
+                    if r2 and r2[0] is not None:
+                        unpaid_total = r2[0]
+                except:
                     unpaid_total = 0.0
-                    try:
-                        r2 = c.execute("""
-                            SELECT SUM(k.frachtas)
-                            FROM kroviniai AS k
-                            JOIN klientai AS cl ON k.klientas = cl.pavadinimas
-                            WHERE cl.vat_numeris = ?
-                              AND k.saskaitos_busena != 'Apmokėta'
-                        """, (klientas,)).fetchone()
-                        if r2 and r2[0] is not None:
-                            unpaid_total = r2[0]
-                    except:
-                        unpaid_total = 0.0
 
-                    # Naujas limitas: 1/3 musu_limitas – nesumokėtos sumos skirtumas
-                    new_musu = klientu_limitai.get(klientas, 0.0) / 3.0
-                    new_liks = new_musu - unpaid_total
-                    if new_liks < 0:
-                        new_liks = 0.0
+                new_musu = coface_of_client / 3.0
+                new_liks = new_musu - unpaid_total
+                if new_liks < 0:
+                    new_liks = 0.0
 
-                    c.execute("""
-                        UPDATE klientai
-                        SET musu_limitas = ?, likes_limitas = ?
-                        WHERE pavadinimas = ?
-                    """, (new_musu, new_liks, klientas))
-                    conn.commit()
+                c.execute("""
+                    UPDATE klientai
+                    SET musu_limitas = ?, likes_limitas = ?
+                    WHERE vat_numeris = ?
+                """, (new_musu, new_liks, vat_of_client))
+                conn.commit()
 
-                    st.success("✅ Krovinys išsaugotas ir limitai atnaujinti.")
-                    clear_sel()
-                except Exception as e:
-                    st.error(f"❌ Klaida: {e}")
+                st.success("✅ Krovinys išsaugotas ir limitai atnaujinti.")
+                clear_sel()
+            except Exception as e:
+                st.error(f"❌ Klaida: {e}")
