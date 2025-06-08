@@ -1,4 +1,4 @@
-# Disponento sistema logistikai
+# Planning
 
 ## Aprašymas
 DISPO – sistema, skirta logistikos įmonėms centralizuotai ir realiu laiku valdyti krovinius, transporto priemones, darbuotojus, klientus ir užsakymus.
