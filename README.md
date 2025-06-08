@@ -1,14 +1,14 @@
 # Planning
 
 ## Aprašymas
-DISPO – sistema, skirta logistikos įmonėms centralizuotai ir realiu laiku valdyti krovinius, transporto priemones, darbuotojus, klientus ir užsakymus.
+Planavimo sistema, skirta logistikos įmonėms centralizuotai ir realiu laiku valdyti krovinius, transporto priemones, darbuotojus, klientus ir užsakymus.
 
 ## Pagrindinės funkcijos
 - Krovinių, vilkikų, priekabų ir darbuotojų valdymas vienoje sistemoje.
 - Klientų kreditų limitų tikrinimas.
 - Vilkikų ir priekabų priskyrimo, keitimo galimybės.
 - Regionų administravimas ekspedicijos grupėms.
-- Patogus Streamlit naudotojo sąsajos dizainas.
+-
 
 ## Ekrano nuotraukos
 *(Pridėk pagrindinių programos langų ekrano nuotraukas čia)*
@@ -44,5 +44,3 @@ Testavimui naudojamas pytest. Testai tikrina ar duomenų bazėje sukuriamos reik
 - `requirements.txt` – priklausomybės
 - `modules/` – visi programos moduliai (darbuotojai, vilkikai, priekabos ir t.t.)
 
-## Kontaktai
-Projektas pateiktas per GitHub arba archyvuotas kaip `.zip` failas.
