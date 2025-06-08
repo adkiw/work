@@ -1,25 +1,48 @@
 # Planning
 
 ## Aprašymas
-Planavimo sistema, skirta logistikos įmonėms centralizuotai ir realiu laiku valdyti krovinius, transporto priemones, darbuotojus, klientus ir užsakymus.
 
-## Pagrindinės funkcijos
-- Krovinių, vilkikų, priekabų ir darbuotojų valdymas vienoje sistemoje.
-- Klientų kreditų limitų tikrinimas.
-- Vilkikų ir priekabų priskyrimo, keitimo galimybės.
-- Regionų administravimas ekspedicijos grupėms.
--
+Planing – tai centralizuota sistema, skirta efektyviam krovinių, transporto priemonių, darbuotojų ir klientų valdymui logistikos įmonėje. Sistema veikia realiu laiku, leidžia optimizuoti darbo procesus tarp skirtingų padalinių ir mažina žmogiškųjų klaidų tikimybę.
 
-## Ekrano nuotraukos
-*(Pridėk pagrindinių programos langų ekrano nuotraukas čia)*
+## Pagrindinis tikslas
+
+Palengvinti ir automatizuoti visą logistikos grandinės valdymą: krovinių planavimą, transporto ir ekspedicijos grupių darbą, kreditų limitų kontrolę, darbuotojų ir klientų administravimą.
+
+## Funkcionalumai
+
+- **Dvi vartotojų grupės:** transporto vadybininkai ir ekspedicijos vadybininkai.
+- **5 transporto ir 5 ekspedicinės grupės:** kiekviena grupė turi savo priskirtus darbuotojus, o transporto grupėms priskiriami vilkikai.
+- **Regionų valdymas:** ekspedicinėms grupėms priskiriami regionai (pvz., DE14), pagal kuriuos sistema planuoja sekantį vilkiko pervežimą.
+- **Darbuotojų administravimas:** pridėjimas, priskyrimas grupėms, aktyvumo statuso valdymas.
+- **Klientų valdymas:** kortelės, kredito limitų (pagal VAT) priskyrimas ir automatinis likučio perskaičiavimas po kiekvieno pervežimo.
+- **Krovinių valdymas:** vilkiko priskyrimas, validacijos pagal datas ir limitus, būsenos automatinis skaičiavimas.
+- **Vairuotojų planavimas:** informacija apie atostogas ir kadencijos pabaigą, kad būtų paprasta planuoti keitimus.
+- **Priekabų valdymas:** atskira priekabų administracija, priekabos automatiškai priskiriamos vilkikui.
+- **Update modulis:** transporto vadybininkai gali realiu laiku atnaujinti vilkikų informaciją, matyti atnaujinimo laiką.
+- **Planavimo modulis:** ekspedicinės grupės mato, kuriuose regionuose ir kada reikės pervežimų atvykstantiems vilkikams.
+- **Kreditų kontrolė:** jei frachtas viršija kliento limitą – krovinys neįrašomas; apmokėjimo metu suma grįžta į limitą.
+- **Vilkikų ir priekabų perkabinimas:** galima keisti, kurios transporto priemonės ir priekabos susietos.
+- **UI niuansai:** visur išjungtas autocomplete, patogūs filtrai, mygtukai „➕“ ir „✏️“ redagavimui, moderni ir aiški sąsaja.
+
+## Modulių aprašymas
+
+- **Update:** transporto vadybininkų darbo langas, vilkikų pozicijų ir planuojamų atvykimų valdymas, periodinis atnaujinimo sekimas.
+- **Darbuotojai:** priskyrimas grupėms, atsakomybės ir aktyvumo žymėjimas.
+- **Klientai:** limitai pagal COFACE kreditavimo ataskaitas, automatinis likučio perskaičiavimas, apmokėjimų valdymas.
+- **Vairuotojai:** priskyrimas vilkikams, atostogų ir kadencijų valdymas.
+- **Vilkikai:** priskyrimas vadybininkams, priekabų perkabinimo funkcija.
+- **Priekabos:** atskiras priekabų modulis, priskyrimas vilkikams.
+- **Grupės:** ekspedicijos ir transporto grupių administravimas, regionų priskyrimas.
 
 ## Reikalavimai
+
 - Python >=3.9
 - streamlit
 - pandas
 - pytest
 
 ## Diegimas ir paleidimas
+
 1. Atsisiųskite projekto failus.
 2. Instaliuokite priklausomybes:
     ```
@@ -35,12 +58,32 @@ Planavimo sistema, skirta logistikos įmonėms centralizuotai ir realiu laiku va
     ```
 
 ## Testavimas
-Testavimui naudojamas pytest. Testai tikrina ar duomenų bazėje sukuriamos reikalingos lentelės bei ar galima pridėti klientą ir vilkiką.
+
+Testavimui naudojamas pytest. Testai tikrina ar duomenų bazėje sukuriamos reikalingos lentelės bei ar galima pridėti klientą ir vilkiką.  
+Testavimo rezultatai pridedami kaip ekrano nuotrauka.
 
 ## Struktūra
-- `main.py` – pagrindinis failas, kuris paleidžia programą
-- `db.py` – duomenų bazės inicializacija
-- `test_db.py` – testų failas
-- `requirements.txt` – priklausomybės
-- `modules/` – visi programos moduliai (darbuotojai, vilkikai, priekabos ir t.t.)
+
+- `main.py` – pagrindinis failas, kuris paleidžia programą.
+- `db.py` – duomenų bazės inicializacija ir lentelių kūrimas.
+- `test_db.py` – automatizuotų testų failas.
+- `requirements.txt` – priklausomybių sąrašas.
+- `modules/` – atskiri funkcionalumo moduliai: darbuotojai, vilkikai, priekabos, grupės, klientai ir t.t.
+
+## Ekrano nuotraukos
+
+Pagrindinis langas:  
+![Pagrindinis](screen1.png)
+
+Klientų sąrašas:  
+![Klientai](screen2.png)
+
+Vilkikų valdymas:  
+![Vilkikai](screen3.png)
+
+## Kontaktai
+
+Projektas pateiktas per GitHub arba kaip archyvuotas `.zip` failas.
+
+---
 
