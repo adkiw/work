@@ -36,7 +36,7 @@ def show(conn, c):
     # 3) Atgaliniai kvietimai sesijos būsenai
     def clear_selection():
         st.session_state.selected_vilk = None
-        for key in list(st.session_state):
+        for key in list(st.session_state.keys()):
             if key.startswith("f_"):
                 st.session_state[key] = ""
 
