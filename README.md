@@ -83,7 +83,7 @@ Vilkikų valdymas:
 
 ## Kontaktai
 
-Projektas pateiktas per GitHub arba kaip archyvuotas `.zip` failas.
+Projektas pateiktas per GitHub 
 
 ---
 
