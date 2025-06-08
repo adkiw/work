@@ -5,7 +5,7 @@ import pandas as pd
 import datetime
 
 def show(conn, c):
-    st.title("DISPO – Planavimas")
+    st.title("Planavimas")
 
     # ==============================
     # 0) Patikriname, ar lentelėje "kroviniai" yra reikiami stulpeliai.
