@@ -4,7 +4,7 @@ import streamlit as st
 import pandas as pd
 
 def show(conn, c):
-    st.title("DISPO – Grupės")
+    st.title("Grupės")
 
     # 1) Užtikrinti, kad egzistuotų lentelė „grupes“
     c.execute("""
