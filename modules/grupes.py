@@ -156,7 +156,7 @@ def show(conn, c):
         # 10c) Forma naujiems regionams pridėti (keli vienu kartu)
         with st.form("prideti_regionus", clear_on_submit=True):
             st.write("Įveskite regionų kodus semikolonais atskirtus (pvz.: FR10;FR20;IT05)")
-            regionu_input = st.text_area("Regionų sąrašas", max_chars=1000)
+            regionu_input = st.text_area("Regionų sąrašas", max_chars=10000)
             prideti_btn = st.form_submit_button("➕ Pridėti regionus")
 
             if prideti_btn:
