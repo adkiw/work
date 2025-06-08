@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 
 def show(conn, c):
-    # 1. Ensure required columns exist
+    # 1. Užtikrinti, kad egzistuotų reikiami stulpeliai
     expected = {
         'vat_numeris':          'TEXT',
         'kontaktinis_asmuo':    'TEXT',
@@ -26,7 +26,7 @@ def show(conn, c):
             c.execute(f"ALTER TABLE klientai ADD COLUMN {col} {typ}")
     conn.commit()
 
-    # Callbacks
+    # Atgaliniai kvietimai
     def clear_selection():
         st.session_state.selected_client = None
 
@@ -36,18 +36,18 @@ def show(conn, c):
     def start_edit(cid):
         st.session_state.selected_client = cid
 
-    # 2. Title + Add button
+    # 2. Antraštė + „Pridėti naują klientą“ mygtukas
     title_col, add_col = st.columns([9, 1])
     title_col.title("DISPO – Klientai")
     add_col.button("➕ Pridėti naują klientą", on_click=start_new)
 
-    # 3. Init state
+    # 3. Būsenos inicializavimas
     if 'selected_client' not in st.session_state:
         st.session_state.selected_client = None
 
-    # 4. List view (no headers above or below filters; placeholders inside filter inputs)
+    # 4. Sąrašo rodinys (be antraščių virš ir po filtrų; filtrų laukeliai su vietos žymėmis)
     if st.session_state.selected_client is None:
-        # Load data
+        # Užkrauti duomenis
         df = pd.read_sql(
             "SELECT id, pavadinimas, salis, regionas, miestas, likes_limitas AS limito_likutis FROM klientai",
             conn
@@ -56,23 +56,23 @@ def show(conn, c):
             st.info("ℹ️ Nėra klientų.")
             return
 
-        # Replace NaN with empty strings for display
+        # Pakeisti NaN į tuščias eilutes rodymui
         df = df.fillna('')
 
-        # Filters with placeholders (no header labels above or below)
+        # Filtrai su vietos žymėmis (be antraščių virš ar po)
         filter_cols = st.columns(len(df.columns) + 1)
         for i, col in enumerate(df.columns):
             filter_cols[i].text_input(label="", placeholder=col, key=f"f_{col}")
         filter_cols[-1].write("")
 
-        # Apply filters
+        # Filtrų taikymas
         df_filt = df.copy()
         for col in df.columns:
             val = st.session_state.get(f"f_{col}", "")
             if val:
                 df_filt = df_filt[df_filt[col].astype(str).str.contains(val, case=False, na=False)]
 
-        # Data rows with edit button (no header row)
+        # Duomenų eilutės su redagavimo mygtuku (be antraštės)
         for _, row in df_filt.iterrows():
             row_cols = st.columns(len(df_filt.columns) + 1)
             for i, col in enumerate(df_filt.columns):
@@ -85,7 +85,7 @@ def show(conn, c):
             )
         return
 
-    # 5. Detail / new form
+    # 5. Detali forma / naujas įrašas
     sel = st.session_state.selected_client
     is_new = (sel == 0)
     cli = {}
@@ -98,14 +98,14 @@ def show(conn, c):
         cli = df_cli.iloc[0]
 
     st.markdown("### Kliento duomenys")
-    # Build a map of existing VAT → coface_limitas
+    # Sukurti žemėlapį: esamas PVM numeris → coface_limitas
     existing_vats = {
         row['vat_numeris']: row['coface_limitas']
         for _, row in pd.read_sql("SELECT vat_numeris, coface_limitas FROM klientai", conn).iterrows()
         if row['vat_numeris']
     }
 
-    # 6. Form fields (VAT required; COFACE limit manual)
+    # 6. Formos laukai (PVM privalomas; COFACE limitas įvedamas ranka)
     col1, col2 = st.columns(2)
     with st.form("client_form", clear_on_submit=False):
         pavadinimas = col1.text_input(
@@ -171,7 +171,7 @@ def show(conn, c):
             key="saskaitos_tel"
         )
 
-        # If VAT already exists and this is a new client, prefill COFACE limit
+        # Jeigu PVM numeris jau egzistuoja ir kuriamas naujas klientas, iš anksto užpildyti COFACE limitą
         coface_prefill = ""
         if is_new and vat_default == "" and st.session_state.get("vat_numeris", "") in existing_vats:
             coface_prefill = str(existing_vats[st.session_state["vat_numeris"]])
@@ -184,14 +184,14 @@ def show(conn, c):
             key="coface_limitas"
         )
 
-        # Compute "Mūsų limitas" and "Limito likutis" (read-only display)
+        # Apskaičiuoti „Mūsų limitą“ ir „Limito likutį“ (tik skaitymui)
         def compute_limits(vat, coface):
             try:
                 coface_val = float(coface)
             except:
                 return "", ""
             musu = coface_val / 3.0
-            # If kroviniai table does not exist yet, unpaid_sum = 0
+            # Jei lentelės 'kroviniai' nėra, unpaid_sum = 0
             c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='kroviniai'")
             if not c.fetchone():
                 unpaid_sum = 0.0
@@ -225,21 +225,21 @@ def show(conn, c):
         save = st.form_submit_button("💾 Išsaugoti")
         back = st.form_submit_button("🔙 Grįžti į sąrašą", on_click=clear_selection)
 
-    # 7. Save / Back logic
+    # 7. Išsaugojimo / Grįžimo logika
     if save:
-        # Validation: VAT required
+        # Validavimas: PVM numeris privalomas
         if not st.session_state["vat_numeris"].strip():
             st.error("❌ PVM/VAT numeris yra privalomas.")
             return
 
-        # Convert COFACE to float
+        # COFACE konvertavimas į skaičių
         try:
             coface_val = float(st.session_state["coface_limitas"])
         except:
             st.error("❌ Netinkamas COFACE limitas. Įveskite skaičių.")
             return
 
-        # Compute Mūsų limitas ir limito likutis for this VAT
+        # Apskaičiuoti Mūsų limitą ir limito likutį šiam PVM
         musu_limitas_calc, liks_calc = compute_limits(
             st.session_state["vat_numeris"], 
             st.session_state["coface_limitas"]
@@ -274,9 +274,9 @@ def show(conn, c):
                 c.execute(f"UPDATE klientai SET {sc} WHERE id=?", tuple(vals_list))
             conn.commit()
 
-            # 8. After saving or updating, update all clients with same VAT:
+            # Išsaugojus / atnaujinus, atnaujinti visus klientus su tuo pačiu PVM:
             vat = st.session_state["vat_numeris"]
-            # Recompute unpaid fracht sum for this VAT
+            # Perskaičiuoti neapmokėto frachto sumą šiam PVM
             c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='kroviniai'")
             if not c.fetchone():
                 unpaid_total = 0.0
@@ -297,7 +297,7 @@ def show(conn, c):
             if new_liks < 0:
                 new_liks = 0.0
 
-            # Update all rows where vat_numeris = vat
+            # Atnaujinti visus įrašus, kurių vat_numeris = vat
             c.execute("""
                 UPDATE klientai
                 SET coface_limitas = ?, musu_limitas = ?, likes_limitas = ?
