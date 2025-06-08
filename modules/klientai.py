@@ -38,7 +38,7 @@ def show(conn, c):
 
     # 2. Antraštė + „Pridėti naują klientą“ mygtukas
     title_col, add_col = st.columns([9, 1])
-    title_col.title("DISPO – Klientai")
+    title_col.title("Klientai")
     add_col.button("➕ Pridėti naują klientą", on_click=start_new)
 
     # 3. Būsenos inicializavimas
