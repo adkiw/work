@@ -21,7 +21,7 @@ def show(conn, c):
 
     # Antraštė + „Pridėti naują darbuotoją“ mygtukas
     title_col, add_col = st.columns([9, 1])
-    title_col.title("DISPO – Darbuotojai")
+    title_col.title("Darbuotojai")
     add_col.button("➕ Pridėti naują darbuotoją", on_click=start_new, use_container_width=True)
 
     # Inicializuojame būseną
