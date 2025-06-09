@@ -71,13 +71,18 @@ Testavimo rezultatai pridedami kaip ekrano nuotrauka.
 - `modules/` – atskiri funkcionalumo moduliai: darbuotojai, vilkikai, priekabos, grupės, klientai ir t.t.
 
 ## Ekrano nuotraukos
-Ekspedicinių grupių veikimo principas: 
+
+***Ekspedicinių grupių veikimo principas: 
 Kiekviena ekspedicinė grupė turi jai priskirtus regionus(Šalies inicialai ir pirmi du regiono skaičiai), kuriuos galima koreguoti. 
 ![grupes1](screens/Grupes1.jpg)
 Tada Planavimo modulyje pasirinkus grupę, rodo iškrovimo informaciją tik tų vilkiku, kurie išsikrauna tai grupei priskirtuose regionuose.
 ![grupes2](screens/Grupes2.jpg)
 
-## Kontaktai
+***Klientų kredito limito veikimo principas: 
+Klientus tikrinam per draudimo bendrovę COFACE. Kiek ji, įvertinusi rizikas, kredituoja klientą. Mes papildomai šią sumą padaliname iš 3(dėl saugumo). 
+Įvedus į sistemą užsakymą ant kliento, automatiškai sumažėja kredito limito likutis 
+![limito atstatymas3](screens/limito atstatymas3.jpg)
+
 
 Projektas pateiktas per GitHub 
 
