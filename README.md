@@ -72,7 +72,7 @@ Testavimo rezultatai pridedami kaip ekrano nuotrauka.
 
 ## Ekrano nuotraukos
 
-# ***Ekspedicinių grupių veikimo principas:  
+***Ekspedicinių grupių veikimo principas:  
 Kiekviena ekspedicinė grupė turi jai priskirtus regionus(Šalies inicialai ir pirmi du regiono skaičiai), kuriuos galima koreguoti. 
 ![grupes1](screens/Grupes1.jpg)
 Tada Planavimo modulyje pasirinkus grupę, rodo iškrovimo informaciją tik tų vilkiku, kurie išsikrauna tai grupei priskirtuose regionuose.
