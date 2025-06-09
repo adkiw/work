@@ -60,7 +60,7 @@ Palengvinti ir automatizuoti visą logistikos grandinės valdymą: krovinių pla
 ## Testavimas
 
 Testavimui naudojamas pytest. Testai tikrina ar duomenų bazėje sukuriamos reikalingos lentelės bei ar galima pridėti klientą ir vilkiką.  
-![Test_results](Test_results.jpg)  
+![Test_results](screens/Test_results.jpg)  
 
 ## Struktūra
 
