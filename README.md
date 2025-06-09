@@ -121,3 +121,29 @@ Esant dideliam vilkikų kiekiui, ekspedicinės grupės gali filtruotis ir matyti
 Funkcija randasi Vilkikų modulyje. Skirta taupyti laiką ir vienu paspaudimu sukeisti vilkikų priekabas(perkabinti). 
 ![Perkabinimas1](screens/Perkabinimas1.jpg) 
 ![Perkabinimas2](screens/Perkabinimas2.jpg) 
+
+## Ateities planai ir plėtra
+
+**Sekimo sistemų integracija:
+Integracija su GPS/sekimo sistemomis, kad pagal vilkiko realią lokaciją būtų automatiškai skaičiuojami planuojami atvykimo laikai, fiksuojamas atvykimas/išvykimas ir vairuotojo darbo režimo laikai.
+
+**Nauji moduliai:  
+Apskaitos modulis: sąskaitos, limitai, apmokėjimai, skolos; 
+Išorinių vežėjų modulis.
+Klientų valdymo (CRM) modulis.
+
+**Prisijungimai ir rolės:
+Vartotojų autentifikacija, skirtingos teisės (administratorius, vadybininkas ir kt.).
+
+**Dashboard/statistikos skydelis:
+Darbuotojų, krovinių, vilkikų, priekabų statistika, rodikliai, ataskaitos.
+
+**Automatizavimo algoritmai:
+Automatinis krovinių priskyrimas vilkikams pagal optimalumą.
+Perkabinimo algoritmas.
+
+**Mobilioji aplikacija:
+Pagrindinės/reikalingiausios funkcijos užtikrinančios komunikacija tarp visų dalyviu ne darbo metu. 
+
+
+
