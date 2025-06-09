@@ -137,24 +137,25 @@ Sekimo sistemų integracija:
 Integracija su GPS/sekimo sistemomis, kad pagal vilkiko realią lokaciją būtų automatiškai skaičiuojami planuojami atvykimo laikai, fiksuojamas atvykimas/išvykimas ir vairuotojo darbo režimo laikai.  
 
 Nauji moduliai:  
-Apskaitos modulis: sąskaitos, limitai, apmokėjimai, skolos; 
-Išorinių vežėjų modulis.
-Klientų valdymo (CRM) modulis.  
+Apskaitos modulis: sąskaitos, limitai, apmokėjimai, skolos;  
+Išorinių vežėjų modulis;  
+Klientų valdymo (CRM) modulis;  
+Technikos skyriaus modulis.
 
-Prisijungimai ir rolės:
+Prisijungimai ir rolės:  
 Vartotojų autentifikacija, skirtingos teisės (administratorius, vadybininkas ir kt.).  
 
-Dashboard/statistikos skydelis:
+Dashboard/statistikos skydelis:  
 Darbuotojų, krovinių, vilkikų, priekabų statistika, rodikliai, ataskaitos.  
 
-Automatizavimo algoritmai:
+Automatizavimo algoritmai:  
 Automatinis krovinių priskyrimas vilkikams pagal optimalumą.
 Perkabinimo algoritmas.  
 
-Mobilioji aplikacija:
+Mobilioji aplikacija:  
 Pagrindinės/reikalingiausios funkcijos užtikrinančios komunikacija tarp visų dalyviu ne darbo metu.   
 
-Kalbos: 
+Kalbos:   
 Anglų, Vokiečių, Ukrianiečių, Lenkų, Pranzūsų, Ispanų, Italų, Čekų, Vengrų, Bulgarų, Rumunų, Latvių.   
 
 
