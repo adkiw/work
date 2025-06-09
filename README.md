@@ -81,7 +81,7 @@ Tada Planavimo modulyje pasirinkus grupę, rodo iškrovimo informaciją tik tų 
 ***Klientų kredito limito veikimo principas: 
 Klientus tikrinam per draudimo bendrovę COFACE. Kiek ji, įvertinusi rizikas, kredituoja klientą. Mes papildomai šią sumą padaliname iš 3(dėl saugumo). 
 Įvedus į sistemą užsakymą ant kliento, automatiškai sumažėja kredito limito likutis 
-![Limito atstatymas3](screens/Limito atstatymas3.jpg)
+![Limito atstatymas3](screens/Limito_atstatymas3.jpg)
 
 
 Projektas pateiktas per GitHub 
