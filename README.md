@@ -114,5 +114,5 @@ Visa ši informacija keliauja į Planavimo modulį.
 Planavimo modulyje ekspedicinės grupės mato visas paskutinias vilkikų iškrovimo vietas, atvykimo laikus ir vairuotojų darbo laikus(iš Update modulio).  
 Tokiu būdu įvertina kada ir kur reikia naujo užsakymo. 
 
-Esant dideliam vilkikų kiekiui, ekspedicinės grupės gali filtruotis ir matyti tik į jų reginus atvykstančius vilkikus(pagal upildyma modulyje Grupės)
+Esant dideliam vilkikų kiekiui, ekspedicinės grupės gali filtruotis ir matyti tik į jų atarnaujamus regionus atvykstančius vilkikus(pagal užpildyma modulyje Grupės)
 ![Uzimtas_vilkikas](screens/Grupes2.jpg)
