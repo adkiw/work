@@ -110,3 +110,8 @@ užpildyti IST ir PST(vilkiko statusą: atvyko; pakrautas/iškrautas).
 Fiksuojamas praėjęs laikas nuo paskurinio atnaujinimo, kad informacija būtu aktuali ir nepasenusi: 
 ![Uzimtas_vilkikas](screens/Update1.jpg)
 
+Visa ši informacija keliauja į Planavimo modulį.  
+Planavimo modulyje ekspedicinės grupės mato visas paskutinias vilkikų iškrovimo vietas, atvykimo laikus ir vairuotojų darbo laikus(iš Update modulio).  
+Tokiu būdu įvertina kada ir kur reikia naujo užsakymo. 
+
+Esant dideliam vilkikų kiekiui, ekspedicinės grupės gali filtruotis ir matyti tik į jų reginus atvykstančius vilkikus(pagal upildyma modulyje Grupės)
