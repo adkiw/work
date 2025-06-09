@@ -114,7 +114,6 @@ def show(conn, c):
             c.execute(f"ALTER TABLE kroviniai ADD COLUMN {col} {typ}")
     conn.commit()
 
-    # Paruošti dropdown'us ir žemėlapius
     klientai = [r[0] for r in c.execute("SELECT pavadinimas FROM klientai").fetchall()]
     if len(klientai) == 0:
         st.warning("Nėra nė vieno kliento! Pridėkite klientą modulyje **Klientai** ir grįžkite čia.")
@@ -129,7 +128,6 @@ def show(conn, c):
     vilkikai_df = pd.read_sql_query("SELECT numeris, vadybininkas FROM vilkikai", conn)
     vilk_vad_map = {r['numeris']: r['vadybininkas'] for _, r in vilkikai_df.iterrows()}
 
-    # Klientų limitų žemėlapis
     df_klientai = pd.read_sql_query("SELECT pavadinimas, likes_limitas FROM klientai", conn)
     klientu_limitai = {row['pavadinimas']: row['likes_limitas'] for _, row in df_klientai.iterrows()}
 
@@ -149,13 +147,11 @@ def show(conn, c):
 
     sel = st.session_state['selected_cargo']
 
-    # 4. Krovinio sąrašas
     if sel is None:
         df = pd.read_sql_query("SELECT * FROM kroviniai", conn)
         if df.empty:
             st.info("Kol kas nėra krovinių.")
         else:
-            # Sukurti papildomas stulpelius
             df["pakrovimo_vieta"] = df.apply(lambda r: get_vieta(r.get('pakrovimo_salis', ''), r.get('pakrovimo_regionas', '')), axis=1)
             df["iskrovimo_vieta"] = df.apply(lambda r: get_vieta(r.get('iskrovimo_salis', ''), r.get('iskrovimo_regionas', '')), axis=1)
             df["transporto_vadybininkas"] = df["vilkikas"].map(vilk_vad_map).fillna("")
@@ -167,7 +163,6 @@ def show(conn, c):
 
             df_disp = df[FIELD_ORDER].fillna("")
 
-            # Filtravimas
             filter_cols = st.columns(len(df_disp.columns) + 1)
             for i, col in enumerate(df_disp.columns):
                 filter_cols[i].text_input(
@@ -208,7 +203,6 @@ def show(conn, c):
             )
         return
 
-    # 5. Forma naujam / redaguojamam krovinį
     is_new = (sel == 0)
     data = {} if is_new else pd.read_sql_query("SELECT * FROM kroviniai WHERE id=?", conn, params=(sel,)).iloc[0]
     if not is_new and data.empty:
@@ -219,7 +213,6 @@ def show(conn, c):
     st.markdown("### Krovinių įvedimas")
     colA, colB, colC, colD = st.columns(4)
     with st.form("cargo_form", clear_on_submit=False):
-        # --- Stulpelis A: pagrindinė info ---
         opts_k = [""] + klientai
         idx_k = 0 if is_new else opts_k.index(data.get('klientas', ''))
         klientas = colA.selectbox("Klientas", opts_k, index=idx_k, key="kl_klientas")
@@ -239,7 +232,6 @@ def show(conn, c):
         eksped_idx = eksped_dropdown.index(eksped_val) if eksped_val in eksped_dropdown else 0
         eksped_vad = colA.selectbox("Ekspedicijos vadybininkas", eksped_dropdown, index=eksped_idx, key="eksped_vad")
 
-        # --- Stulpelis B: pakrovimo datos ir laikas ---
         pk_data = colB.date_input(
             "Pakrovimo data",
             value=(date.today() if is_new else pd.to_datetime(data['pakrovimo_data']).date()),
@@ -279,7 +271,6 @@ def show(conn, c):
             key="pk_iki"
         )
 
-        # --- Stulpelis C: iškrovimo datos ir laikas ---
         isk_data = colC.date_input(
             "Iškrovimo data",
             value=((pk_data + timedelta(days=1)) if is_new else pd.to_datetime(data['iskrovimo_data']).date()),
@@ -319,7 +310,6 @@ def show(conn, c):
             key="is_iki"
         )
 
-        # --- Stulpelis D: transporto priemonės ir finansai ---
         v_opts = [""] + vilkikai
         v_idx = 0 if is_new else v_opts.index(data.get('vilkikas', ''))
         vilk = colD.selectbox("Vilkikas", v_opts, index=v_idx, key="cr_vilk")
@@ -353,7 +343,6 @@ def show(conn, c):
         save = st.form_submit_button("💾 Išsaugoti")
         back = st.form_submit_button("🔙 Grįžti į sąrašą", on_click=clear_sel)
 
-    # 6. Išsaugojimo / Grįžimo logika
     if save:
         try:
             frachtas_float = float(fr.replace(",", ".") or 0)
@@ -368,7 +357,6 @@ def show(conn, c):
             st.error("❌ Netinkamas skaičius (Km / Svoris / Padėklai).")
             return
 
-        # Patikrinti, ar pakrovimo data ne vėlesnė už iškrovimo
         if pk_data > isk_data:
             st.error("Pakrovimo data negali būti vėlesnė už iškrovimo.")
             return
@@ -376,11 +364,9 @@ def show(conn, c):
             st.error("Privalomi laukai: Klientas ir Užsakymo nr.")
             return
         else:
-            # Patikrinti, ar vilkikas turi persidengiantį krovinį (išimtis: jei kaupiasi ir kraunasi tą pačią dieną)
             if vilk:
                 new_pk = pk_data.isoformat()
                 new_isk = isk_data.isoformat()
-                # Jeigu redaguojama, tuomet exclude dabartinį įrašą, o jeigu naujas, exclude id=0, kuris neegzistuoja
                 existing_overlap = c.execute("""
                     SELECT COUNT(*) FROM kroviniai
                     WHERE vilkikas = ?
@@ -392,7 +378,6 @@ def show(conn, c):
                     st.error("❌ Šis vilkikas jau turi krovinį su persidengiančiomis datomis. Patikrinkite įrašų datas.")
                     return
 
-            # Išsaugoti klientui priskirtą VAT ir COFACE informaciją
             vat_row = c.execute(
                 "SELECT vat_numeris, coface_limitas FROM klientai WHERE pavadinimas = ?",
                 (klientas,)
@@ -402,7 +387,6 @@ def show(conn, c):
                 return
             vat_of_client, coface_of_client = vat_row
 
-            # Apskaičiuoti mūsų limitą ir einamąją neapmokėtą sumą
             musu_limitas = coface_of_client / 3.0
             unpaid_sum = 0.0
             try:
@@ -422,11 +406,14 @@ def show(conn, c):
             if current_limit < 0:
                 current_limit = 0.0
 
-            if frachtas_float > current_limit:
-                st.error(f"Kliento limito likutis ({round(current_limit,2)}) yra mažesnis nei frachtas ({frachtas_float}). Negalima išsaugoti.")
-                return
+            # === Svarbiausia vieta (patobulintas limitų tikrinimas) ===
+            if not is_new and (data.get('saskaitos_busena') != sask_busena) and sask_busena == "Apmokėta":
+                pass
+            else:
+                if frachtas_float > current_limit:
+                    st.error(f"Kliento limito likutis ({round(current_limit,2)}) yra mažesnis nei frachtas ({frachtas_float}). Negalima išsaugoti.")
+                    return
 
-            # Sudėti visus laukus į žodyną
             vals = {
                 'klientas': klientas,
                 'uzsakymo_numeris': uzsak,
@@ -467,7 +454,6 @@ def show(conn, c):
                     c.execute(q, tuple(vals.values()) + (sel,))
                 conn.commit()
 
-                # Atnaujinti klientų limitus
                 unpaid_total = 0.0
                 try:
                     r2 = c.execute("""
