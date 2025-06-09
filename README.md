@@ -93,4 +93,6 @@ Kai klientas apmoka sąskaita, tai pažymima Užsakymų modulyje ir ta suma grį
 ![nelogiskos_datos](screens/Nelogiskos_datos.jpg)
 
 Neišsaugo užsakymo, kai trūksta kredito limito reikiamai įmonei. 
-![nelogiskos_datos](screens/Nepakankamas_limitas.jpg)
+![nelogiskos_datos](screens/Nepakankamas_limitas.jpg) 
+Nepriskiria vilkiko užsakymui, jeigu tuo metu vilkikas turi užduotį. 
+![nelogiskos_datos](screens/Uzimtas_vilkikas.jpg)
