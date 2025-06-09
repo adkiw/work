@@ -100,12 +100,12 @@ Nepriskiria vilkiko užsakymui, jeigu tuo metu vilkikas turi užduotį.
 
 ***Update ir Planavimo moduliai: 
 Suvedus užsakymą ir priskyrus vilkiką, užsakymai atsiranda Update modulyje, kur transporto vadybininkai arba transporto grupės, gali atsifiltruoti savo vilkikus, kur periodiškai turi: 
-užpildyti SA(savaitinę vairuotojo atstovą);
-užpildyti BDL(bendro vairuotojo darbo laiko pabaigą); 
-upildyti LDL(likusį vairuotojo darbo laiką atvykus į tikslą; 
-užpildyti PD ir ID(planuojamos į tikslą atvykimo datos); 
-užpildyti PL ir IL(planuojamas į tikslą atvykimo laikas); 
-upildyti IST ir PST(vilkiko statusą: atvyko; pakrautas/iškrautas). 
+užpildyti SA(savaitinę vairuotojo atstovą);  
+užpildyti BDL(bendro vairuotojo darbo laiko pabaigą);   
+upildyti LDL(likusį vairuotojo darbo laiką atvykus į tikslą;  
+užpildyti PD ir ID(planuojamos į tikslą atvykimo datos);  
+užpildyti PL ir IL(planuojamas į tikslą atvykimo laikas);  
+užpildyti IST ir PST(vilkiko statusą: atvyko; pakrautas/iškrautas).  
 
 Fiksuojamas praėjęs laikas nuo paskurinio atnaujinimo, kad informacija būtu aktuali ir nepasenusi: 
 ![Uzimtas_vilkikas](screens/Update1.jpg)
