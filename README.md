@@ -115,3 +115,4 @@ Planavimo modulyje ekspedicinės grupės mato visas paskutinias vilkikų iškrov
 Tokiu būdu įvertina kada ir kur reikia naujo užsakymo. 
 
 Esant dideliam vilkikų kiekiui, ekspedicinės grupės gali filtruotis ir matyti tik į jų reginus atvykstančius vilkikus(pagal upildyma modulyje Grupės)
+![Uzimtas_vilkikas](screens/Grupes2.jpg)
