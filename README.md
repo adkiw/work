@@ -136,26 +136,26 @@ Funkcija randasi Vilkikų modulyje. Skirta taupyti laiką ir vienu paspaudimu su
 **Sekimo sistemų integracija:
 Integracija su GPS/sekimo sistemomis, kad pagal vilkiko realią lokaciją būtų automatiškai skaičiuojami planuojami atvykimo laikai, fiksuojamas atvykimas/išvykimas ir vairuotojo darbo režimo laikai.
 
-**Nauji moduliai:  
+Nauji moduliai:  
 Apskaitos modulis: sąskaitos, limitai, apmokėjimai, skolos; 
 Išorinių vežėjų modulis.
-Klientų valdymo (CRM) modulis.
+Klientų valdymo (CRM) modulis.  
 
-**Prisijungimai ir rolės:
-Vartotojų autentifikacija, skirtingos teisės (administratorius, vadybininkas ir kt.).
+Prisijungimai ir rolės:
+Vartotojų autentifikacija, skirtingos teisės (administratorius, vadybininkas ir kt.).  
 
-**Dashboard/statistikos skydelis:
-Darbuotojų, krovinių, vilkikų, priekabų statistika, rodikliai, ataskaitos.
+Dashboard/statistikos skydelis:
+Darbuotojų, krovinių, vilkikų, priekabų statistika, rodikliai, ataskaitos.  
 
-**Automatizavimo algoritmai:
+Automatizavimo algoritmai:
 Automatinis krovinių priskyrimas vilkikams pagal optimalumą.
-Perkabinimo algoritmas.
+Perkabinimo algoritmas.  
 
-**Mobilioji aplikacija:
-Pagrindinės/reikalingiausios funkcijos užtikrinančios komunikacija tarp visų dalyviu ne darbo metu. 
+Mobilioji aplikacija:
+Pagrindinės/reikalingiausios funkcijos užtikrinančios komunikacija tarp visų dalyviu ne darbo metu.   
 
-**Kalbos: 
-Anglų, Vokiečių, Ukrianiečių, Lenkų, Pranzūsų, Ispanų, Italų, Čekų, Vengrų, Bulgarų, Rumunų, Latvių. 
+Kalbos: 
+Anglų, Vokiečių, Ukrianiečių, Lenkų, Pranzūsų, Ispanų, Italų, Čekų, Vengrų, Bulgarų, Rumunų, Latvių.   
 
 
 
