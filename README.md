@@ -82,9 +82,9 @@ Tada Planavimo modulyje pasirinkus grupę, rodo iškrovimo informaciją tik tų 
 Klientus tikrinam per draudimo bendrovę COFACE. Kiek ji, įvertinusi rizikas, kredituoja klientą. Mes papildomai šią sumą padaliname iš 3(dėl saugumo). 
 Įvedus į sistemą užsakymą ant kliento, automatiškai sumažėja šio kliento kredito limito likutis. 
 
-![Limito_atstatymas1](screens/limito_atstatymas1.jpg) 
+![Limito_atstatymas1](screens/Limito_atstatymas1.jpg) 
 
-![Limito_atstatymas2](screens/limito_atstatymas2.jpg) 
+![Limito_atstatymas2](screens/Limito_atstatymas2.jpg) 
 
 Kai klientas apmoka sąskaita, tai pažymima Užsakymų modulyje ir ta suma grįžta į kliento kreditingumo sumą: 
 ![Limito_atstatymas3](screens/limito_atstatymas3.jpg) 
