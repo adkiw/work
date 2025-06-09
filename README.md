@@ -33,6 +33,7 @@ Palengvinti ir automatizuoti visą logistikos grandinės valdymą: krovinių pla
 - **Vilkikai:** priskyrimas vadybininkams, priekabų perkabinimo funkcija.
 - **Priekabos:** atskiras priekabų modulis, priskyrimas vilkikams.
 - **Grupės:** ekspedicijos ir transporto grupių administravimas, regionų priskyrimas.
+- **Planavimo:** Pagrindinė informacija, pagal kurią vyksta planavimas. 
 
 ## Reikalavimai
 
