@@ -145,5 +145,8 @@ Perkabinimo algoritmas.
 **Mobilioji aplikacija:
 Pagrindinės/reikalingiausios funkcijos užtikrinančios komunikacija tarp visų dalyviu ne darbo metu. 
 
+**Kalbos: 
+Anglų, Vokiečių, Ukrianiečių, Lenkų, Pranzūsų, Ispanų, Italų, Čekų, Vengrų, Bulgarų, Rumunų, Latvių. 
+
 
 
