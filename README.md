@@ -133,8 +133,8 @@ Funkcija randasi Vilkikų modulyje. Skirta taupyti laiką ir vienu paspaudimu su
 
 ## Ateities planai ir plėtra
 
-**Sekimo sistemų integracija:
-Integracija su GPS/sekimo sistemomis, kad pagal vilkiko realią lokaciją būtų automatiškai skaičiuojami planuojami atvykimo laikai, fiksuojamas atvykimas/išvykimas ir vairuotojo darbo režimo laikai.
+Sekimo sistemų integracija:
+Integracija su GPS/sekimo sistemomis, kad pagal vilkiko realią lokaciją būtų automatiškai skaičiuojami planuojami atvykimo laikai, fiksuojamas atvykimas/išvykimas ir vairuotojo darbo režimo laikai.  
 
 Nauji moduliai:  
 Apskaitos modulis: sąskaitos, limitai, apmokėjimai, skolos; 
