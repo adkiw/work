@@ -62,6 +62,15 @@ Palengvinti ir automatizuoti visą logistikos grandinės valdymą: krovinių pla
 Testavimui naudojamas pytest. Testai tikrina ar duomenų bazėje sukuriamos reikalingos lentelės bei ar galima pridėti klientą ir vilkiką.  
 ![Test_results](screens/Test_results.jpg)  
 
+## Naudojimosi intrukcija(vartotojo žingsniai): 
+1. Pridėkite naują klientą (skiltis **Klientai**)
+2. Pridėkite naują darbuotoją ir priskirkite jį grupei (**Darbuotojai**)
+3. Pridėkite vilkiką, priekabą, vairuotoją (atitinkamose moduliuose)
+4. Sukurkite naują krovinį (**Kroviniai**)
+5. Priskirkite vilkiką krovinio užsakymui
+6. Atlikite veiksmų filtravimą ir atnaujinimus moduliuose **Update** ir **Planavimas**
+7. Naudokitės filtravimo, redagavimo, CSV eksporto galimybėmis kiekviename modulyje
+
 ## Struktūra
 
 - `main.py` – pagrindinis failas, kuris paleidžia programą.
