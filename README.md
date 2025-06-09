@@ -87,7 +87,7 @@ Klientus tikrinam per draudimo bendrovę COFACE. Kiek ji, įvertinusi rizikas, k
 Kai klientas apmoka sąskaita, tai pažymima Užsakymų modulyje ir ta suma grįžta į kliento kreditingumo sumą: 
 ![Limito_atstatymas3](screens/limito_atstatymas3.jpg) 
 ![Limito_atstatymas4](screens/Limito_atstatymas4.jpg) 
-Projektas pateiktas per GitHub 
 
----
-
+***Saugikliai: 
+Įvedant užsakymą, datos negali prasilenkti(pakrovimas būti vėliau už iškrovimą. 
+![nelogiskos_datos](screens/nelogiskos_datos.jpg)
