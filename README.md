@@ -90,4 +90,4 @@ Kai klientas apmoka sąskaita, tai pažymima Užsakymų modulyje ir ta suma grį
 
 ***Saugikliai: 
 Įvedant užsakymą, datos negali prasilenkti(pakrovimas būti vėliau už iškrovimą. 
-![nelogiskos_datos](screens/nelogiskos_datos.jpg)
+![nelogiskos_datos](screens/Nelogiskos_datos.jpg)
