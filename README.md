@@ -71,9 +71,11 @@ Testavimo rezultatai pridedami kaip ekrano nuotrauka.
 - `modules/` – atskiri funkcionalumo moduliai: darbuotojai, vilkikai, priekabos, grupės, klientai ir t.t.
 
 ## Ekrano nuotraukos
-paaiskinimas
-![asfdaga](screens/Grupes1.jpg)
-
+Ekspedicinių grupių veikimo principas: 
+Kiekviena ekspedicinė grupė turi jai priskirtus regionus(Šalies inicialai ir pirmi du regiono skaičiai), kuriuos galima koreguoti. 
+![grupes1](screens/Grupes1.jpg)
+Tada Planavimo modulyje pasirinkus grupę, rodo iškrovimo informaciją tik tų vilkiku, kurie išsikrauna tai grupei priskirtuose regionuose.
+![grupes2](screens/Grupes2.jpg)
 
 ## Kontaktai
 
