@@ -71,7 +71,7 @@ Testavimo rezultatai pridedami kaip ekrano nuotrauka.
 - `modules/` – atskiri funkcionalumo moduliai: darbuotojai, vilkikai, priekabos, grupės, klientai ir t.t.
 
 ## Ekrano nuotraukos
-!(screens/Grupes1.jpg)
+![asfdaga](screens/Grupes1.jpg)
 
 
 ## Kontaktai
