@@ -72,14 +72,7 @@ Testavimo rezultatai pridedami kaip ekrano nuotrauka.
 
 ## Ekrano nuotraukos
 
-Pagrindinis langas:  
-![Pagrindinis](screen1.png)
 
-Klientų sąrašas:  
-![Klientai](screen2.png)
-
-Vilkikų valdymas:  
-![Vilkikai](screen3.png)
 
 ## Kontaktai
 
