@@ -118,6 +118,6 @@ Esant dideliam vilkikų kiekiui, ekspedicinės grupės gali filtruotis ir matyti
 ![Grupes2s](screens/Grupes2.jpg) 
 
 ***Priekabų perkabinimas 
-Funkcija randasi Vilkikų modulyje. Patogumui 
+Funkcija randasi Vilkikų modulyje. Skirta taupyti laiką ir vienu paspaudimu sukeisti vilkikų priekabas(perkabinti). 
 ![Perkabinimas1](screens/Perkabinimas1.jpg) 
 ![Perkabinimas2](screens/Perkabinimas2.jpg) 
