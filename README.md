@@ -2,7 +2,7 @@
 
 ## Aprašymas
 
-Planing – tai centralizuota sistema, skirta efektyviam krovinių, transporto priemonių, darbuotojų ir klientų valdymui logistikos įmonėje. Sistema veikia realiu laiku, leidžia optimizuoti darbo procesus tarp skirtingų padalinių ir mažina žmogiškųjų klaidų tikimybę.
+Planning – tai centralizuota sistema, skirta efektyviam krovinių, transporto priemonių, darbuotojų ir klientų valdymui logistikos įmonėje. Sistema veikia realiu laiku, leidžia optimizuoti darbo procesus tarp skirtingų padalinių ir mažina žmogiškųjų klaidų tikimybę.
 
 ## Pagrindinis tikslas
 
